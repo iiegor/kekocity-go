@@ -37,4 +37,6 @@ type IPacket interface {
 	AddBool(_value bool) bool
 	AddString(_value string) bool
 	AddBuffer(_value []uint8) bool
+
+	ToString() string
 }
