@@ -27,6 +27,11 @@ func serveDefault(w http.ResponseWriter, r *http.Request) {
   io.WriteString(w, "<html><body><h1>It works!</h1></body></html>")
 }
 
+func Prepare() {
+  log.Println("KEKOCITY-GO")
+  log.Println("*****************************************")
+}
+
 func Boot() {
   flag.Parse()
 
