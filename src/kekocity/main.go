@@ -10,8 +10,6 @@ import (
   "net/http"
 )
 
-var addr = flag.String("addr", types.SERVICE, "http service address")
-
 func serveDefault(w http.ResponseWriter, r *http.Request) {
   if r.URL.Path != "/" {
     http.Error(w, "Not found.", 404)
@@ -35,20 +33,5 @@ func Prepare() {
 func Boot() {
   flag.Parse()
 
-  go net.Run()
-
-  defer func() {
-    // Handle functions
-    http.HandleFunc("/", serveDefault)
-    http.HandleFunc("/ws", net.ServeWs)
-
-    // Start listening
-    err := http.ListenAndServe(*addr, nil)
-
-  	if err != nil {
-  		log.Fatal("ListenAndServe: ", err)
-  	}
-  }()
-
-  log.Println("Listening for new connections...")
+  net.Listen(types.SERVICE)
 }

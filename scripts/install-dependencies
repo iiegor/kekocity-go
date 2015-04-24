@@ -1,1 +1,2 @@
 go get github.com/gorilla/websocket
+go get golang.org/x/net/websocket

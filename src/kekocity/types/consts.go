@@ -3,8 +3,10 @@ package types
 import "time"
 
 const (
+  DEBUG bool = true
+
   // Service port
-  SERVICE = ":8080"
+  SERVICE int = 8080
 
   // Time allowed to write a message to the peer.
   WRITE_WAIT = 10 * time.Second
