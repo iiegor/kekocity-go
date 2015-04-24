@@ -1,4 +1,4 @@
-package kekocity
+package net
 
 // Active connections and broadcasts messages to the connections.
 type hub struct {
@@ -43,4 +43,8 @@ func (h *hub) run() {
 			}
 		}
 	}
+}
+
+func Run() {
+  h.run()
 }
