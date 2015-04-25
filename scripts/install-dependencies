@@ -1,2 +1,4 @@
 go get github.com/gorilla/websocket
 go get golang.org/x/net/websocket
+go get github.com/eaigner/hood
+go get github.com/ziutek/mymysql/godrv

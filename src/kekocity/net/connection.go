@@ -9,6 +9,7 @@ import (
   "golang.org/x/net/websocket"
 
   pnet "kekocity/misc/packet"
+  "kekocity/interfaces"
 )
 
 type Connection struct {
@@ -16,6 +17,8 @@ type Connection struct {
 
   txChan chan pnet.INetMessageWriter
 	rxChan chan pnet.INetMessageReader
+
+  player interfaces.IPlayer
 }
 
 func NewConnection(_socket *websocket.Conn) *Connection {
@@ -30,6 +33,16 @@ func NewConnection(_socket *websocket.Conn) *Connection {
   go connection.SendPoller()
 
   return connection
+}
+
+func (c *Connection) AssignPlayer(_player interfaces.IPlayer) {
+  if _player == nil {
+    panic("net.connection: the player interface can not be nil!")
+    return
+  }
+
+  c.player = _player
+  _player.SetNetworkChans(c.rxChan, c.txChan)
 }
 
 /*

@@ -2,5 +2,5 @@
 ```sh
 $ envsetup.sh
 $ scripts/install-dependencies
-$ run.sh
+$ scripts/run
 ```

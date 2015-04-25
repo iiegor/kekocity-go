@@ -10,7 +10,7 @@ import (
 
   pnet "kekocity/misc/packet"
   cmap "kekocity/misc/concurrentmap"
-  "kekocity/misc/cli"
+  "kekocity/data/helpers"
 )
 
 var server *Server
@@ -59,14 +59,24 @@ func parseFirstMessage(_conn *websocket.Conn, _packet *pnet.Packet) {
   }
 
   // Create the connection
-  //connection := NewConnection(_conn)
+  connection := NewConnection(_conn)
+
+  // Authentication wrapper
+  player, err := helpers.AuthenticateUsingCredentials("token")
+
+  if err != nil {
+    log.Fatal("Invalid credentials!")
+  } else {
+    log.Println(player)
+  }
+
+  connection.ReceivePoller()
 }
 
 func Listen(_port int) {
   server.port = _port
 
   log.Println("Listening for new connections...")
-  cli.Listen()
 
   http.Handle("/ws", websocket.Handler(clientConnection))
 

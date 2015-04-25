@@ -5,9 +5,13 @@ import (
   "log"
   "flag"
   "io"
+  "net/http"
+  "os"
+
   "kekocity/net"
   "kekocity/types"
-  "net/http"
+  "kekocity/data/helpers"
+  "kekocity/data/entities"
 )
 
 func serveDefault(w http.ResponseWriter, r *http.Request) {
@@ -28,10 +32,28 @@ func serveDefault(w http.ResponseWriter, r *http.Request) {
 func Prepare() {
   log.Println("KEKOCITY-GO")
   log.Println("*****************************************")
+
+  if types.DEBUG {
+    log.Println("Creating a database connection...")
+  }
+  db := helpers.OpenDatabaseConnection()
+
+  // Start transaction
+  tx := db.Begin()
+
+  // Create table
+  err := tx.CreateTable(&entities.User{})
+  if err != nil {
+    panic(err)
+  }
 }
 
 func Boot() {
   flag.Parse()
 
   net.Listen(types.SERVICE)
+}
+
+func Exit(code int) {
+  os.Exit(code)
 }
