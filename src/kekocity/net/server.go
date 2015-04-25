@@ -8,7 +8,7 @@ import (
 
   "golang.org/x/net/websocket"
 
-  pnet "kekocity/net/packet"
+  pnet "kekocity/misc/packet"
   cmap "kekocity/misc/concurrentmap"
 )
 
@@ -18,6 +18,17 @@ type Server struct {
   port int
 
   players *cmap.ConcurrentMap
+}
+
+func init() {
+	server = newServer()
+}
+
+func newServer() *Server {
+	return &Server{
+    port: 8080,
+    players: cmap.New(),
+  }
 }
 
 func clientConnection(clientsock *websocket.Conn) {
@@ -48,6 +59,8 @@ func parseFirstMessage(_conn *websocket.Conn, _packet *pnet.Packet) {
 
   // Create the connection
   connection := NewConnection(_conn)
+
+  connection.SendPoller()
 }
 
 func Listen(_port int) {

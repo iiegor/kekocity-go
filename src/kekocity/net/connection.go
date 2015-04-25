@@ -8,7 +8,7 @@ import (
 
   "golang.org/x/net/websocket"
 
-  pnet "kekocity/net/packet"
+  pnet "kekocity/misc/packet"
 )
 
 type Connection struct {
