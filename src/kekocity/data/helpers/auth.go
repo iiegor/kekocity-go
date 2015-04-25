@@ -1,7 +1,42 @@
 package helpers
 
-import "kekocity/interfaces"
+import (
+  "fmt"
 
-func AuthenticateUsingCredentials(_token string) (interfaces.IPlayer, error) {
-  return nil, nil
+  "kekocity/data/entities"
+  "kekocity/data/models"
+  "kekocity/interfaces"
+)
+
+var AuthHelper *authHelper
+
+type authHelper struct{}
+
+func init() {
+	AuthHelper = &authHelper{}
+}
+
+func (a *authHelper) userEntityToModel(_entity *entities.User) (*models.User, error) {
+  u := models.NewUser(_entity, db)
+	u.Username = _entity.Username
+
+  return u, nil
+}
+
+func (a *authHelper) AuthenticateUsingCredentials(_token string) (interfaces.IUser, error) {
+  var result *entities.User
+	err := db.Where("Token", "=", _token).Find(result)
+	if err != nil {
+		return nil, err
+	}
+	if result == nil {
+		return nil, fmt.Errorf("Player '%s' not found", _token)
+	}
+
+	playerModel, err := a.userEntityToModel(result)
+	if err != nil {
+		return nil, err
+	}
+
+	return playerModel, nil
 }

@@ -18,7 +18,7 @@ var server *Server
 type Server struct {
   port int
 
-  players *cmap.ConcurrentMap
+  connectedUsers *cmap.ConcurrentMap
 }
 
 func init() {
@@ -28,7 +28,7 @@ func init() {
 func newServer() *Server {
 	return &Server{
     port: 8080,
-    players: cmap.New(),
+    connectedUsers: cmap.New(),
   }
 }
 
@@ -62,15 +62,25 @@ func parseFirstMessage(_conn *websocket.Conn, _packet *pnet.Packet) {
   connection := NewConnection(_conn)
 
   // Authentication wrapper
-  player, err := helpers.AuthenticateUsingCredentials("token")
+  user, err := helpers.AuthHelper.AuthenticateUsingCredentials(message)
 
   if err != nil {
     log.Fatal("Invalid credentials!")
   } else {
-    log.Println(player)
+    // Need to check if its already logged
+
+    // Assign
+    connection.AssignUser(user)
+
+    // Send success message
+	  //connection.txChan <- packet
+
+    return
   }
 
-  connection.ReceivePoller()
+  // Send bad auth message and close
+  //connection.txChan <- packet
+  //connection.Close()
 }
 
 func Listen(_port int) {

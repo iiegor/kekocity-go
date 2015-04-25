@@ -9,19 +9,25 @@ import (
   _ "github.com/ziutek/mymysql/godrv"
 )
 
+var db *hood.Hood
+
 func OpenDatabaseConnection() *hood.Hood {
-  var username string = "root"
-	var password string = "test"
-	var scheme string = "kekocity"
-  
-	connectionString := fmt.Sprintf("%v/%v/%v", scheme, username, password)
+  if db == nil {
+    var username string = "root"
+    var password string = "test"
+    var scheme string = "kekocity"
 
-  hd, err := hood.Open("mymysql", connectionString)
+    connectionString := fmt.Sprintf("%v/%v/%v", scheme, username, password)
 
-  if err != nil {
-    log.Fatal("helpers.database:", "unable to connect to database", err.Error())
-    return nil
+    _db, err := hood.Open("mymysql", connectionString)
+
+    if err != nil {
+      log.Fatal("helpers.database:", "unable to connect to database", err.Error())
+      return nil
+    }
+
+    db = _db
   }
 
-  return hd
+  return db
 }

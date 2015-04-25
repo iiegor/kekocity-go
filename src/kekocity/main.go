@@ -11,7 +11,6 @@ import (
   "kekocity/net"
   "kekocity/types"
   "kekocity/data/helpers"
-  "kekocity/data/entities"
 )
 
 func serveDefault(w http.ResponseWriter, r *http.Request) {
@@ -36,16 +35,7 @@ func Prepare() {
   if types.DEBUG {
     log.Println("Creating a database connection...")
   }
-  db := helpers.OpenDatabaseConnection()
-
-  // Start transaction
-  tx := db.Begin()
-
-  // Create table
-  err := tx.CreateTable(&entities.User{})
-  if err != nil {
-    panic(err)
-  }
+  helpers.OpenDatabaseConnection()
 }
 
 func Boot() {
