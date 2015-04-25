@@ -10,6 +10,7 @@ import (
 
   pnet "kekocity/misc/packet"
   cmap "kekocity/misc/concurrentmap"
+  "kekocity/misc/cli"
 )
 
 var server *Server
@@ -58,15 +59,14 @@ func parseFirstMessage(_conn *websocket.Conn, _packet *pnet.Packet) {
   }
 
   // Create the connection
-  connection := NewConnection(_conn)
-
-  connection.SendPoller()
+  //connection := NewConnection(_conn)
 }
 
 func Listen(_port int) {
   server.port = _port
 
   log.Println("Listening for new connections...")
+  cli.Listen()
 
   http.Handle("/ws", websocket.Handler(clientConnection))
 
