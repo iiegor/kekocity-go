@@ -29,7 +29,10 @@ func (c *Cli) parseInput(str string) {
   context := NewContext(c)
 
   cm := c.Command(str)
-  cm.Action(context)
+
+  if cm != nil {
+    cm.Action(context)
+  }
 }
 
 func Listen() {
