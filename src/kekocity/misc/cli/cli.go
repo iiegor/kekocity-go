@@ -4,24 +4,16 @@ import (
   "fmt"
   "bufio"
   "os"
-  "io"
   "strings"
 )
 
 type Cli struct {
   // List of commands
   Commands []Command
-
-  // The action to execute
-	Action func(context *Context)
-
-  Writer io.Writer
 }
 
 func newCli() *Cli {
-	return &Cli{
-    Writer: os.Stdout,
-  }
+	return &Cli{}
 }
 
 func (c *Cli) parseInput(str string) {
