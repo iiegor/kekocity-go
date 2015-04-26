@@ -1,9 +1,7 @@
 package entities
 
-import "github.com/eaigner/hood"
-
 type User struct {
-  Id        hood.Id
+  Id        uint
   Username  string `sql:"size(15),notnull"`
   Password  string `sql:"size(15),notnull"`
   Rank      int
