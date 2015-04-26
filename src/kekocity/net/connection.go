@@ -50,7 +50,6 @@ func (c *Connection) ReceivePoller() {
 
     if err == nil {
 			copy(packet.Buffer[0:len(buffer)], buffer[0:len(buffer)])
-			packet.GetHeader()
 
 			c.processPacket(packet)
 		} else {
@@ -61,7 +60,10 @@ func (c *Connection) ReceivePoller() {
 }
 
 func (c *Connection) processPacket(_packet pnet.IPacket) {
-  log.Println("Packet received from receivepoller:", _packet.ToString())
+  log.Println("Received packet:", _packet.ToString())
+
+  // Test response
+  websocket.JSON.Send(c.socket, c.user);
 }
 
 func (c *Connection) Close() {

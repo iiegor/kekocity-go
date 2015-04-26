@@ -7,7 +7,7 @@ type AuthMessage struct {
 }
 
 func (m *AuthMessage) WritePacket() pnet.IPacket {
-  packet := pnet.NewPacketExt(0x01)
+  packet := pnet.NewPacket()
   packet.AddString(string(m.Status))
 
   return packet

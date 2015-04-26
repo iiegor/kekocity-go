@@ -25,7 +25,8 @@ func (a *authHelper) userEntityToModel(_entity *entities.User) (*models.User, er
 
 func (a *authHelper) AuthenticateUsingCredentials(_token string) (interfaces.IUser, error) {
   var users *entities.User
-  db.Query("SELECT * FROM user").Rows(&users)
+  var query string = fmt.Sprintf("SELECT * FROM user WHERE token = '%v'", _token)
+  db.Query(query).Rows(&users)
 
   if users == nil {
 		return nil, fmt.Errorf("Player '%s' not found", _token)

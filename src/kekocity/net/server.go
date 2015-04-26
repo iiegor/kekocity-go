@@ -80,7 +80,6 @@ func parseFirstMessage(_conn *websocket.Conn, _packet *pnet.Packet) {
   user, err := helpers.AuthHelper.AuthenticateUsingCredentials(_message)
 
   if err != nil {
-    log.Fatal("Invalid credentials!")
     authPacket.Status = "error"
   } else {
     // Need to check if its already logged
@@ -94,6 +93,6 @@ func parseFirstMessage(_conn *websocket.Conn, _packet *pnet.Packet) {
   }
 
   // Send bad auth message and close
-  connection.txChan <- authPacket
+  //connection.txChan <- authPacket
   connection.Close()
 }
