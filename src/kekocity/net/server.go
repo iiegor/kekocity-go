@@ -11,6 +11,7 @@ import (
   pnet "kekocity/misc/packet"
   cmap "kekocity/misc/concurrentmap"
   "kekocity/data/helpers"
+  "kekocity/net/message"
 )
 
 var server *Server
@@ -32,6 +33,19 @@ func newServer() *Server {
   }
 }
 
+func Listen(_port int) {
+  server.port = _port
+
+  log.Printf("Listening for connections on port %d!", _port)
+
+  http.Handle("/ws", websocket.Handler(clientConnection))
+
+	err := http.ListenAndServe(fmt.Sprintf(":%d", _port), nil)
+	if err != nil {
+		panic("ListenAndServe: " + err.Error())
+	}
+}
+
 func clientConnection(clientsock *websocket.Conn) {
   packet := pnet.NewPacket()
   buffer := make([]uint8, pnet.PACKET_MAXSIZE)
@@ -50,10 +64,10 @@ func clientConnection(clientsock *websocket.Conn) {
 }
 
 func parseFirstMessage(_conn *websocket.Conn, _packet *pnet.Packet) {
-  message := _packet.ToString()
+  _message := _packet.ToString()
 
   // If the first packet length is < 1 close the socket
-  if len(message) < 1 {
+  if len(_message) < 1 {
     _conn.Close()
     return
   }
@@ -62,36 +76,24 @@ func parseFirstMessage(_conn *websocket.Conn, _packet *pnet.Packet) {
   connection := NewConnection(_conn)
 
   // Authentication wrapper
-  user, err := helpers.AuthHelper.AuthenticateUsingCredentials(message)
+  authPacket := &message.AuthMessage{}
+  user, err := helpers.AuthHelper.AuthenticateUsingCredentials(_message)
 
   if err != nil {
     log.Fatal("Invalid credentials!")
+    authPacket.Status = "error"
   } else {
     // Need to check if its already logged
 
-    // Assign
-    connection.AssignUser(user)
+    authPacket.Status = "success"
 
-    // Send success message
-	  //connection.txChan <- packet
+    connection.AssignToUser(user)
+	  connection.txChan <- authPacket
 
     return
   }
 
   // Send bad auth message and close
-  //connection.txChan <- packet
-  //connection.Close()
-}
-
-func Listen(_port int) {
-  server.port = _port
-
-  log.Println("Listening for new connections...")
-
-  http.Handle("/ws", websocket.Handler(clientConnection))
-
-	err := http.ListenAndServe(fmt.Sprintf(":%d", _port), nil)
-	if err != nil {
-		panic("ListenAndServe: " + err.Error())
-	}
+  connection.txChan <- authPacket
+  connection.Close()
 }

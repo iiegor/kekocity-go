@@ -35,7 +35,7 @@ func NewConnection(_socket *websocket.Conn) *Connection {
   return connection
 }
 
-func (c *Connection) AssignUser(_user interfaces.IUser) {
+func (c *Connection) AssignToUser(_user interfaces.IUser) {
   if _user == nil {
     panic("net.connection: the user interface can not be nil!")
     return

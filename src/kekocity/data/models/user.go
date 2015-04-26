@@ -3,8 +3,8 @@ package models
 import (
   "log"
 
-  "github.com/eaigner/hood"
-  
+  "github.com/eaigner/jet"
+
   pnet "kekocity/misc/packet"
   "kekocity/data/entities"
 )
@@ -13,16 +13,17 @@ type User struct {
   Username string
 	UserEntity *entities.User
 
-	db *hood.Hood
+	dbConn *jet.Db
 
 	rxChan <-chan pnet.INetMessageReader
 	txChan chan<- pnet.INetMessageWriter
 }
 
-func NewUser(_entity *entities.User, _db *hood.Hood) *User {
+func NewUser(_entity *entities.User, _db *jet.Db) *User {
   u := &User{}
   u.UserEntity = _entity
-  u.db = _db
+  u.Username = _entity.Username
+  u.dbConn = _db
 
   return u
 }

@@ -24,16 +24,14 @@ func (a *authHelper) userEntityToModel(_entity *entities.User) (*models.User, er
 }
 
 func (a *authHelper) AuthenticateUsingCredentials(_token string) (interfaces.IUser, error) {
-  var result []entities.User
-	err := db.Where("Token", "=", _token).Find(&result)
-	if err != nil {
-		return nil, err
-	}
-  if len(result) <= 0 {
+  var users *entities.User
+  db.Query("SELECT * FROM user").Rows(&users)
+
+  if users == nil {
 		return nil, fmt.Errorf("Player '%s' not found", _token)
 	}
 
-	playerModel, err := a.userEntityToModel(&result[0])
+	playerModel, err := a.userEntityToModel(users)
 	if err != nil {
 		return nil, err
 	}

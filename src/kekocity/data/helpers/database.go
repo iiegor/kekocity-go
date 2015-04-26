@@ -5,13 +5,13 @@ import (
   "log"
   "fmt"
 
-  "github.com/eaigner/hood"
+  "github.com/eaigner/jet"
   _ "github.com/ziutek/mymysql/godrv"
 )
 
-var db *hood.Hood
+var db *jet.Db
 
-func OpenDatabaseConnection() *hood.Hood {
+func OpenDatabaseConnection() *jet.Db {
   if db == nil {
     var username string = "root"
     var password string = "test"
@@ -19,7 +19,7 @@ func OpenDatabaseConnection() *hood.Hood {
 
     connectionString := fmt.Sprintf("%v/%v/%v", scheme, username, password)
 
-    _db, err := hood.Open("mymysql", connectionString)
+    _db, err := jet.Open("mymysql", connectionString)
 
     if err != nil {
       log.Fatal("helpers.database:", "unable to connect to database", err.Error())
