@@ -1,6 +1,3 @@
-/*
- * TODO: Parse the incoming packet, receivepoller, sendpoller, newconnection
- */
 package net
 
 import (
@@ -10,6 +7,7 @@ import (
 
   pnet "kekocity/misc/packet"
   "kekocity/interfaces"
+  //"kekocity/net/message"
 )
 
 type Connection struct {
@@ -30,7 +28,6 @@ func NewConnection(_socket *websocket.Conn) *Connection {
   }
 
   go connection.ReceivePoller()
-  go connection.SendPoller()
 
   return connection
 }
@@ -45,20 +42,17 @@ func (c *Connection) AssignToUser(_user interfaces.IUser) {
   _user.SetNetworkChans(c.rxChan, c.txChan)
 }
 
-/*
- * ReceivePoller and SendPoller starts listening when the first packet is verified and the new connection is started
- */
 func (c *Connection) ReceivePoller() {
   for {
     packet := pnet.NewPacket()
+		var buffer []uint8
+    err := websocket.Message.Receive(c.socket, &buffer)
 
-    var buffer []uint8
-		err := websocket.Message.Receive(c.socket, &buffer)
-
-		if err == nil {
+    if err == nil {
 			copy(packet.Buffer[0:len(buffer)], buffer[0:len(buffer)])
+			packet.GetHeader()
 
-			c.parsePacket(packet)
+			c.processPacket(packet)
 		} else {
 			println(err.Error())
 			break
@@ -66,31 +60,8 @@ func (c *Connection) ReceivePoller() {
   }
 }
 
-func (c *Connection) SendPoller() {
-  for {
-    // Read messages from transmit channel
-    message := <-c.txChan
-
-    if message == nil {
-      log.Println("SenPoller", "The message is nil, break the loop")
-      break
-    }
-
-    // Convert netmessage to packet
-    packet := message.WritePacket()
-    packet.SetHeader()
-
-    // Create byte buffer
-    buffer := packet.GetBuffer()
-    data := buffer[0:packet.GetMsgSize()]
-
-    // Send bytes off to the internetz
-    websocket.Message.Send(c.socket, data)
-  }
-}
-
-func (c *Connection) parsePacket(_packet pnet.IPacket) {
-  log.Println("net.connection:", "Received new packet!")
+func (c *Connection) processPacket(_packet pnet.IPacket) {
+  log.Println("Packet received from receivepoller:", _packet.ToString())
 }
 
 func (c *Connection) Close() {
