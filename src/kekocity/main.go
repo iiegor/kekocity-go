@@ -2,11 +2,12 @@ package kekocity
 
 // <imports>
 import (
-  "log"
   "flag"
   "io"
+  "log"
   "net/http"
   "os"
+  "fmt"
 
   "kekocity/net"
   "kekocity/types"
@@ -29,8 +30,9 @@ func serveDefault(w http.ResponseWriter, r *http.Request) {
 }
 
 func Prepare() {
-  log.Println("KEKOCITY-GO")
-  log.Println("*****************************************")
+  fmt.Println("*****************************************")
+  fmt.Println("**            KEKOCITY-GO              **")
+  fmt.Println("*****************************************")
 
   if types.DEBUG {
     log.Println("Creating a database connection...")

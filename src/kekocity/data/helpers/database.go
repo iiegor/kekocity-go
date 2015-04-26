@@ -2,8 +2,8 @@ package helpers
 
 // <imports>
 import (
-  "fmt"
   "log"
+  "fmt"
 
   "github.com/eaigner/hood"
   _ "github.com/ziutek/mymysql/godrv"
