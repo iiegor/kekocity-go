@@ -1,78 +1,79 @@
 package net
 
 import (
-  "log"
+  "fmt"
+  "errors"
 
-  "golang.org/x/net/websocket"
+  "github.com/gorilla/websocket"
+  "github.com/bitly/go-simplejson"
 
-  pnet "kekocity/misc/packet"
   "kekocity/interfaces"
-  //"kekocity/net/message"
+  //netmsg "kekocity/net/message"
 )
 
-type Connection struct {
-  socket *websocket.Conn
+const (
+	fps  = 24               // Frames per second.
+	fpsl = 1000 / fps       // Duration of a single (milliseconds)
+	fpsn = 1000000000 / fps // Duration of a single frame (nanoseconds)
+)
 
-  txChan chan pnet.INetMessageWriter
-	rxChan chan pnet.INetMessageReader
+var ErrNoWebsocket = errors.New(`Don't have any websocket connection.`)
+
+type Connection struct {
+  ws *websocket.Conn
+
+  output chan *simplejson.Json
 
   user interfaces.IUser
 }
 
-func NewConnection(_socket *websocket.Conn) *Connection {
+func NewConnection(_ws *websocket.Conn) *Connection {
   // The pointer allow us to modify connection struct from outside
   connection := &Connection{
-    socket: _socket,
-    txChan: make(chan pnet.INetMessageWriter),
-    rxChan: make(chan pnet.INetMessageReader),
+    ws: _ws,
+    output: make(chan *simplejson.Json),
   }
 
-  go connection.ReceivePoller()
+  go connection.Writer()
+  connection.Reader()
 
   return connection
 }
 
-func (c *Connection) AssignToUser(_user interfaces.IUser) {
-  if _user == nil {
-    panic("net.connection: the user interface can not be nil!")
-    return
-  }
-
-  c.user = _user
-  _user.SetNetworkChans(c.rxChan, c.txChan)
-}
-
-func (c *Connection) ReceivePoller() {
+func (c *Connection) Writer() {
   for {
-    packet := pnet.NewPacket()
-		var buffer []uint8
-    err := websocket.Message.Receive(c.socket, &buffer)
+    // Read messages from transmit channel
+    netmessage := <-c.output
 
-    if err == nil {
-			copy(packet.Buffer[0:len(buffer)], buffer[0:len(buffer)])
+    if netmessage == nil {
+      fmt.Println("ConnectionWrapper", "SendPoller", "Netmessage == nil, breaking loop")
+      break
+    }
 
-			c.processPacket(packet)
-		} else {
-			println(err.Error())
-			break
-		}
-  }
+    // Send bytes off to the internetz
+    c.ws.WriteJSON(netmessage)
+	}
 }
 
-func (c *Connection) processPacket(_packet pnet.IPacket) {
-  log.Println("Received packet:", _packet.ToString())
+func (c *Connection) Reader() {
+  for {
+    _, message, err := c.ws.ReadMessage()
+    if err != nil {
+      break
+    }
 
-  // Test response
-  websocket.JSON.Send(c.socket, c.user);
+    obj, err := simplejson.NewJson([]byte(message))
+    c.processPacket(obj)
+	}
+}
+
+func (c *Connection) processPacket(obj *simplejson.Json) {
+  c.output <- obj
 }
 
 func (c *Connection) Close() {
-  // Close channels
-  close(c.txChan)
-  close(c.rxChan)
-
-  // Close the socket
-  c.socket.Close()
+  // Close the websocket
+  c.ws.Close()
 
   c.user = nil
 }
