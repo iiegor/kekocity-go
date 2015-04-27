@@ -8,7 +8,7 @@ import (
   "github.com/bitly/go-simplejson"
 
   "kekocity/interfaces"
-  //netmsg "kekocity/net/message"
+  netmsg "kekocity/net/message"
 )
 
 const (
@@ -24,7 +24,7 @@ type Connection struct {
 
   output chan *simplejson.Json
 
-  user interfaces.IUser
+  player interfaces.IPlayer
 }
 
 func NewConnection(_ws *websocket.Conn) *Connection {
@@ -38,6 +38,15 @@ func NewConnection(_ws *websocket.Conn) *Connection {
   connection.Reader()
 
   return connection
+}
+
+func (c *Connection) AssignToPlayer(_player interfaces.IPlayer) {
+  if _player == nil {
+    panic("Connection - Player interface can not be nil")
+  }
+
+  c.player = _player
+  _player.SetNetworkChans(c.output)
 }
 
 func (c *Connection) Writer() {
@@ -68,12 +77,29 @@ func (c *Connection) Reader() {
 }
 
 func (c *Connection) processPacket(obj *simplejson.Json) {
-  c.output <- obj
+  namespace, err := obj.GetIndex(0).String()
+  if len(namespace) < 1 || err != nil {
+    fmt.Println("Namespace can not be nil")
+    return
+  }
+
+  switch namespace {
+  case "auth":
+    player, err := netmsg.AuthPacket(obj.GetIndex(1))
+    if err != nil {
+      c.Close()
+      return
+    }
+
+    c.AssignToPlayer(player)
+  default:
+    fmt.Printf("Unhandled packet received - %v\n", namespace)
+  }
 }
 
 func (c *Connection) Close() {
   // Close the websocket
   c.ws.Close()
 
-  c.user = nil
+  c.player = nil
 }
