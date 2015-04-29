@@ -49,7 +49,7 @@ func (c *Connection) AssignToPlayer(_player interfaces.IPlayer) {
   }
 
   c.player = _player
-  c.player.SetNetworkChans(c.output)
+  _player.SetNetworkChans(c.output)
 }
 
 func (c *Connection) Writer() {
@@ -77,7 +77,7 @@ func (c *Connection) Reader() {
     obj, err := simplejson.NewJson([]byte(message))
     if err != nil {
       fmt.Println("Can not parse the message:", string(message))
-      return
+      continue
     }
 
     c.processPacket(obj)
@@ -87,14 +87,14 @@ func (c *Connection) Reader() {
 func (c *Connection) processPacket(obj *simplejson.Json) {
   namespace, err := obj.GetIndex(0).String()
   if len(namespace) < 1 || err != nil {
-    fmt.Println("Namespace can not be nil")
+    fmt.Println("Namespace can not be nil:", obj)
     return
   }
 
   // Unauth packet handler
   switch namespace {
-  default:
-    fmt.Printf("Unhandled packet received - %v\n", namespace)
+    default:
+      fmt.Printf("Unhandled packet received - %v\n", namespace)
   }
 }
 

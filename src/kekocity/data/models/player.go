@@ -1,7 +1,7 @@
 package models
 
 import (
-  "log"
+  "fmt"
 
   "github.com/bitly/go-simplejson"
 
@@ -48,6 +48,6 @@ func (p *Player) netReceiveMessages() {
       break
     }
 
-    log.Println("Received:", message)
+    fmt.Println("Received from player's netReceiveMessages:", message)
   }
 }
