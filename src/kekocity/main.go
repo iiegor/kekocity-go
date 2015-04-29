@@ -20,6 +20,6 @@ func Prepare() {
   helpers.OpenDatabaseConnection()
 }
 
-func Boot(){
+func Boot() {
   net.Listen(SERVICE)
 }
