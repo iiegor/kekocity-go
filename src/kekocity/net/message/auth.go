@@ -2,17 +2,15 @@ package message
 
 import (
   "github.com/bitly/go-simplejson"
-
-  "kekocity/interfaces"
-  "kekocity/data/helpers"
 )
 
-func AuthPacket(_data *simplejson.Json) (interfaces.IPlayer, error) {
-  token, err := _data.Get("token").String()
+type AuthMessage struct {
+  Status string
+}
 
-  if len(token) < 1 || err != nil {
-    return nil, err
-  }
+func (am *AuthMessage) WritePacket() *simplejson.Json {
+  authPacket := simplejson.New()
+  authPacket.Set("status", am.Status)
 
-  return helpers.AuthHelper.AuthenticateUsingCredentials(token)
+  return MakeMessage("auth", authPacket)
 }

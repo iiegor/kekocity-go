@@ -5,6 +5,9 @@ import (
   "net/http"
 
   "github.com/gorilla/websocket"
+
+  "kekocity/data/helpers"
+  netmsg "kekocity/net/message"
 )
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
@@ -17,8 +20,33 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
     return
 	}
 
+  // Get possible session params
+  playerId := r.URL.Query().Get("kakid")
+  playerToken := r.URL.Query().Get("kakpa")
+
+  if len(playerId) == 0 || len(playerToken) == 0 {
+    ws.Close()
+    return
+  }
+
   // Add connection
-  NewConnection(ws)
+  connection := NewConnection(ws)
+
+  authMessage := &netmsg.AuthMessage{}
+  player, err := helpers.AuthHelper.AuthenticateUsingCredentials(playerToken)
+  if err != nil {
+    authMessage.Status = "bad_credentials"
+  } else {
+    authMessage.Status = "success"
+
+    connection.AssignToPlayer(player)
+    connection.output <- authMessage.WritePacket()
+
+    return
+  }
+
+  connection.output <- authMessage.WritePacket()
+  connection.Close()
 }
 
 func Listen(_service int) {

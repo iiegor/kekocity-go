@@ -8,7 +8,7 @@ import (
   "github.com/bitly/go-simplejson"
 
   "kekocity/interfaces"
-  netmsg "kekocity/net/message"
+  //netmsg "kekocity/net/message"
 )
 
 const (
@@ -22,7 +22,9 @@ var ErrNoWebsocket = errors.New(`Don't have any websocket connection.`)
 type Connection struct {
   ws *websocket.Conn
 
+  // Network channels
   output chan *simplejson.Json
+  input chan *simplejson.Json
 
   player interfaces.IPlayer
 }
@@ -32,10 +34,11 @@ func NewConnection(_ws *websocket.Conn) *Connection {
   connection := &Connection{
     ws: _ws,
     output: make(chan *simplejson.Json),
+    input: make(chan *simplejson.Json),
   }
 
   go connection.Writer()
-  connection.Reader()
+  go connection.Reader()
 
   return connection
 }
@@ -46,7 +49,7 @@ func (c *Connection) AssignToPlayer(_player interfaces.IPlayer) {
   }
 
   c.player = _player
-  _player.SetNetworkChans(c.output)
+  c.player.SetNetworkChans(c.output)
 }
 
 func (c *Connection) Writer() {
@@ -72,6 +75,11 @@ func (c *Connection) Reader() {
     }
 
     obj, err := simplejson.NewJson([]byte(message))
+    if err != nil {
+      fmt.Println("Can not parse the message:", string(message))
+      return
+    }
+
     c.processPacket(obj)
 	}
 }
@@ -83,15 +91,8 @@ func (c *Connection) processPacket(obj *simplejson.Json) {
     return
   }
 
+  // Unauth packet handler
   switch namespace {
-  case "auth":
-    player, err := netmsg.AuthPacket(obj.GetIndex(1))
-    if err != nil {
-      c.Close()
-      return
-    }
-
-    c.AssignToPlayer(player)
   default:
     fmt.Printf("Unhandled packet received - %v\n", namespace)
   }
