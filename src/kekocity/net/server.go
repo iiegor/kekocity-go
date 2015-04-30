@@ -10,7 +10,15 @@ import (
   netmsg "kekocity/net/message"
 )
 
+var origins = map[string]bool {
+  "http://localhost": true, // development
+}
+
 func wsHandler(w http.ResponseWriter, r *http.Request) {
+  if !origins[r.Header.Get("Origin")] {
+		http.Error(w, "Origin not allowed", 403)
+		return
+	}
   //Handshake
   ws, err := websocket.Upgrade(w, r, nil, 1024, 1024)
   if _, ok := err.(websocket.HandshakeError); ok {
