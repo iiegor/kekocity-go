@@ -3,15 +3,13 @@ package models
 import (
   "fmt"
 
-  "github.com/bitly/go-simplejson"
-
   "kekocity/data/entities"
 )
 
 type Player struct {
 	PlayerEntity *entities.Player
 
-	output <-chan *simplejson.Json
+	output <-chan interface{}
 }
 
 func NewPlayer(_entity *entities.Player) *Player {
@@ -35,7 +33,7 @@ func (p *Player) GetCoins() int32 {
 }
 
 // Network
-func (p *Player) SetNetworkChans(_output <-chan *simplejson.Json) {
+func (p *Player) SetNetworkChans(_output <-chan interface{}) {
 	p.output = _output
 
 	go p.netReceiveMessages()

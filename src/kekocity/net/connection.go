@@ -23,8 +23,8 @@ type Connection struct {
   ws *websocket.Conn
 
   // Network channels
-  output chan *simplejson.Json
-  input chan *simplejson.Json
+  output chan interface{}
+  input chan interface{}
 
   player interfaces.IPlayer
 }
@@ -33,8 +33,8 @@ func NewConnection(_ws *websocket.Conn) *Connection {
   // The pointer allow us to modify connection struct from outside
   connection := &Connection{
     ws: _ws,
-    output: make(chan *simplejson.Json),
-    input: make(chan *simplejson.Json),
+    output: make(chan interface{}),
+    input: make(chan interface{}),
   }
 
   go connection.Writer()
