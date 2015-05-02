@@ -19,7 +19,7 @@ func MakeMessage(namespace string, json *simplejson.Json) *simplejson.Json {
     return MakeNilMessage(namespace)
   }
 
-  bytes := []byte(fmt.Sprintf(`["%v", %v]`, namespace, string(str)))
+  bytes := []byte(fmt.Sprintf(`[%v, %v]`, namespace, string(str)))
   message, err := simplejson.NewJson(bytes)
   if err != nil {
     return MakeNilMessage(namespace)

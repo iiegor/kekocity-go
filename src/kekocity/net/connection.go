@@ -8,7 +8,7 @@ import (
   "github.com/bitly/go-simplejson"
 
   "kekocity/interfaces"
-  //netmsg "kekocity/net/message"
+  netmsg "kekocity/net/message"
 )
 
 const (
@@ -49,7 +49,8 @@ func (c *Connection) AssignToPlayer(_player interfaces.IPlayer) {
   }
 
   c.player = _player
-  _player.SetNetworkChans(c.output)
+  /* TODO: Issue #2 */
+  //_player.SetNetworkChans(c.output)
 }
 
 func (c *Connection) Writer() {
@@ -91,8 +92,67 @@ func (c *Connection) processPacket(obj *simplejson.Json) {
     return
   }
 
+  /* TODO: See issue #2 */
   // Unauth packet handler
   switch namespace {
+    case "donve":
+      donveMessage := &netmsg.DonveMessage{}
+
+      c.output <- donveMessage.WritePacket()
+    case "ventryatoy":
+      clientMessage := &netmsg.ClientMessage{}
+
+      c.output <- clientMessage.WritePacket()
+    case "parlo":
+      parloStatus, _ := obj.GetIndex(1).String()
+      parlaMessage := &netmsg.ParlaMessage{}
+
+      if parloStatus == "habla" {
+        parlaMessage.Status = "habla"
+      } else {
+        parlaMessage.Status = "n"
+      }
+
+      c.output <- parlaMessage.WritePacket()
+    case "hagostopnew":
+      moveInfo := obj.GetIndex(1)
+      despuesfur, _ := moveInfo.Get("despuesfur").String()
+      eleft, _ := moveInfo.Get("eleft").Int()
+      etop, _ := moveInfo.Get("etop").Int()
+      ezindex, _ := moveInfo.Get("ezindex").Int()
+      harefok, _ := moveInfo.Get("harefok").String()
+      kxa, _ := moveInfo.Get("kxa").Int()
+      kya, _ := moveInfo.Get("kya").Int()
+      mabdanum, _ := moveInfo.Get("mabdanum").Int()
+      soobreidp, _ := moveInfo.Get("soobreidp").Int()
+      sorechekenvio, _ := moveInfo.Get("sorechekenvio").String()
+
+      moveMessage := &netmsg.MoveMessage{
+        Despuesfur: despuesfur,
+        Eleft: eleft,
+        Etop: etop,
+        Ezindex: ezindex,
+        Harefok: harefok,
+        Kxa: kxa,
+        Kya: kya,
+        Mabdanum: mabdanum,
+        Soobreidp: soobreidp,
+        Sorechekenvio: sorechekenvio,
+      }
+
+      c.output <- moveMessage.WritePacket()
+    case "golabelnew":
+      stand, _ := obj.GetIndex(1).String()
+      fokStr, _ := obj.GetIndex(2).String()
+      fokInt, _ := obj.GetIndex(3).Int()
+
+      stopMessage := &netmsg.StopMessage{
+        Stand: stand,
+        FokStr: fokStr,
+        FokInt: fokInt,
+      }
+
+      c.output <- stopMessage.WritePacket()
     default:
       fmt.Printf("Unhandled packet received - %v\n", namespace)
   }
