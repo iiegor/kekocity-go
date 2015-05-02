@@ -9,7 +9,7 @@ import (
 type Player struct {
 	PlayerEntity *entities.Player
 
-	output <-chan interface{}
+	input <-chan interface{}
 }
 
 func NewPlayer(_entity *entities.Player) *Player {
@@ -33,18 +33,15 @@ func (p *Player) GetCoins() int32 {
 }
 
 // Network
-func (p *Player) SetNetworkChans(_output <-chan interface{}) {
-	p.output = _output
+func (p *Player) SetNetworkChans(_input <-chan interface{}) {
+	p.input = _input
 
 	go p.netReceiveMessages()
 }
 
 func (p *Player) netReceiveMessages() {
   for {
-    message := <-p.output
-    if message == nil {
-      break
-    }
+    message := <-p.input
 
     fmt.Println("Received from player's netReceiveMessages:", message)
   }

@@ -6,5 +6,5 @@ type IPlayer interface {
   GetCoins() int32
 
   // Network
-  SetNetworkChans(output <-chan interface{})
+  SetNetworkChans(input <-chan interface{})
 }

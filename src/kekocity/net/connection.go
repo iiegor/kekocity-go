@@ -50,7 +50,7 @@ func (c *Connection) AssignToPlayer(_player interfaces.IPlayer) {
 
   c.player = _player
   /* TODO: Issue #2 */
-  //_player.SetNetworkChans(c.output)
+  _player.SetNetworkChans(c.input)
 }
 
 func (c *Connection) Writer() {
@@ -114,6 +114,8 @@ func (c *Connection) processPacket(obj *simplejson.Json) {
       }
 
       c.output <- parlaMessage.WritePacket()
+    case "pama":
+      c.input <- obj
     case "hagostopnew":
       moveInfo := obj.GetIndex(1)
       despuesfur, _ := moveInfo.Get("despuesfur").String()
