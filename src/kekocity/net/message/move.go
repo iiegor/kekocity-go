@@ -7,6 +7,7 @@ import (
 )
 
 type MoveMessage struct {
+  Idkek int64
   Despuesfur string
   Eleft int
   Etop int
@@ -22,7 +23,7 @@ type MoveMessage struct {
 func (mm *MoveMessage) WritePacket() *simplejson.Json {
   // Fake packet
   movePacket := simplejson.New()
-  movePacket.Set("idkek", 68880)
+  movePacket.Set("idkek", mm.Idkek)
   movePacket.Set("trz", mm.Ezindex)
   movePacket.Set("furk", mm.Harefok)
   movePacket.Set("tra", mm.Eleft)

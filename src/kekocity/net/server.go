@@ -8,10 +8,13 @@ import (
 
   "kekocity/data/helpers"
   netmsg "kekocity/net/message"
+  cmap "kekocity/misc/concurrentmap"
 )
 
+var ConnectedPlayers *cmap.ConcurrentMap = cmap.New()
 var origins = map[string]bool {
   "http://localhost": true, // development
+  "http://playreapergame.com": true, // production
 }
 
 func wsHandler(w http.ResponseWriter, r *http.Request) {
@@ -46,6 +49,10 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
     authMessage.Status = "bad_credentials"
   } else {
     authMessage.Status = "success"
+    authMessage.Keko = player.GetUsername()
+    authMessage.Id = player.GetPlayerId()
+    authMessage.Creditos = player.GetCoins()
+    authMessage.Fichas = player.GetClouds()
 
     connection.AssignToPlayer(player)
     connection.output <- authMessage.WritePacket()

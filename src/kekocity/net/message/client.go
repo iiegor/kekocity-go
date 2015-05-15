@@ -5,14 +5,16 @@ import (
 )
 
 type ClientMessage struct {
+  Idkek int64
+  Kek string
 }
 
-func (am *ClientMessage) WritePacket() *simplejson.Json {
+func (cm *ClientMessage) WritePacket() *simplejson.Json {
   // Fake packet
   clientPacket := simplejson.New()
-  clientPacket.Set("idkek", 68880)
+  clientPacket.Set("idkek", cm.Idkek)
   clientPacket.Set("ecam", "")
-  clientPacket.Set("kek", "undefined")
+  clientPacket.Set("kek", cm.Kek)
   clientPacket.Set("py", 0)
   clientPacket.Set("px", 2)
   clientPacket.Set("cabez", "")
