@@ -1,0 +1,12 @@
+[submodule "src/github.com/bitly/go-simplejson"]
+	path = src/github.com/bitly/go-simplejson
+	url = https://github.com/bitly/go-simplejson
+[submodule "src/github.com/eaigner/jet"]
+	path = src/github.com/eaigner/jet
+	url = https://github.com/eaigner/jet
+[submodule "src/github.com/gorilla/websocket"]
+	path = src/github.com/gorilla/websocket
+	url = https://github.com/gorilla/websocket
+[submodule "src/github.com/ziutek/mymysql"]
+	path = src/github.com/ziutek/mymysql
+	url = https://github.com/ziutek/mymysql

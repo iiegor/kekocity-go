@@ -12,6 +12,9 @@ func Prepare() {
   // Print header
   fmt.Println("*****************************************")
   fmt.Println("**            KEKOCITY-GO              **")
+  fmt.Println("**                                     **")
+  fmt.Printf("** Author: Iegor Azuaga   Version: %v **", VERSION)
+  fmt.Println()
   fmt.Println("*****************************************")
 
   if DEBUG {

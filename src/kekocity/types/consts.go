@@ -1,7 +1,8 @@
 package types
 
 const (
-  DEBUG bool = true
+  VERSION string = "1.0"
+  DEBUG bool     = true
 
-  SERVICE int = 1243
+  SERVICE int    = 1243
 )

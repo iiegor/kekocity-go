@@ -1,15 +1,4 @@
 #!/bin/bash
 
-echo "Installing websocket..."
-go get github.com/gorilla/websocket
-
-echo "Installing mysql driver..."
-go get github.com/ziutek/mymysql/godrv
-
-echo "Installing jet orm..."
-go get github.com/eaigner/jet
-
-echo "Installing simplejson..."
-go get github.com/bitly/go-simplejson
-
-echo "Done!"
+echo "Installing dependencies..."
+git submodule update --init --recursive
