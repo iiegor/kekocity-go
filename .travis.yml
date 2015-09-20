@@ -1,0 +1,17 @@
+language: go
+go: 1.4.2
+
+script:
+  - script/install-deps
+  - make
+
+notifications:
+  email:
+    recipients:
+      - dextrackmedia@gmail.com
+    on_success: never
+    on_failure: change
+
+branches:
+  only:
+    - master
