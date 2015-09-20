@@ -1,17 +1,14 @@
 language: go
-go: 1.4.2
-
-script:
-  - script/install-deps
-  - make
-
 notifications:
   email:
-    recipients:
-      - dextrackmedia@gmail.com
-    on_success: never
-    on_failure: change
+  - dextrackmedia@gmail.com
 
-branches:
-  only:
-    - master
+install:
+- export PATH=$HOME/gopath/bin:$PATH
+- script/install-deps
+- go get -v -d ./...
+
+script: make
+
+go:
+- 1.4.2
