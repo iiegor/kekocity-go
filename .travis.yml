@@ -1,14 +1,16 @@
+sudo: true
 language: go
+
 notifications:
   email:
-  - dextrackmedia@gmail.com
+    - dextrackmedia@gmail.com
 
 install:
-- export PATH=$HOME/gopath/bin:$PATH
-- script/install-deps
-- go get -v -d ./...
+  - export PATH=$HOME/gopath/bin:$PATH
+  - script/install-deps
+  - go get -v -d ./...
 
 script: make
 
 go:
-- 1.4.2
+  - 1.4.2
