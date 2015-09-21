@@ -9,7 +9,7 @@ before_install:
   - git submodule update --init --recursive
 
 install:
-  - export PATH=$HOME/gopath/bin:$PATH
+  - envsetup.sh
 
 script: make
 
