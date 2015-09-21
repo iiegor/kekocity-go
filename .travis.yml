@@ -5,9 +5,11 @@ notifications:
   email:
     - dextrackmedia@gmail.com
 
+before_install:
+  - git submodule update --init --recursive
+
 install:
   - export PATH=$HOME/gopath/bin:$PATH
-  - script/install-deps
   - go get -v -d ./...
 
 script: make
