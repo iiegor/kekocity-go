@@ -10,7 +10,6 @@ before_install:
 
 install:
   - export PATH=$HOME/gopath/bin:$PATH
-  - go get -v -d ./...
 
 script: make
 
