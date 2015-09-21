@@ -9,9 +9,9 @@ before_install:
   - git submodule update --init --recursive
 
 install:
-  - envsetup.sh
+  - export GOPATH=$PWD
 
-script: make
+script: go build
 
 go:
   - 1.4.2
