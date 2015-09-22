@@ -12,9 +12,9 @@ var db *jet.Db
 
 func OpenDatabaseConnection() *jet.Db {
   if db == nil {
-    var username string = "root"
-    var password string = "test"
-    var scheme string = "kekocity"
+    var username string = "adminUWZjs8T"
+    var password string = "ItLe9K-PdEz3"
+    var scheme string = "us"
 
     connectionString := fmt.Sprintf("%v/%v/%v", scheme, username, password)
 

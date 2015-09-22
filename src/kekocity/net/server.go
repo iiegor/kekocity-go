@@ -2,6 +2,7 @@ package net
 
 import (
   "fmt"
+  "os"
   "net/http"
 
   "github.com/gorilla/websocket"
@@ -68,9 +69,10 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 func Listen(_service int) {
   http.HandleFunc("/ws", wsHandler)
 
-  fmt.Printf("Listening for connections on %d!\n", _service)
+  bind := fmt.Sprintf("%s:%s", os.Getenv("OPENSHIFT_GO_IP"), os.Getenv("OPENSHIFT_GO_PORT"))
+  fmt.Printf("Listening for connections on %s!\n", bind)
 
-  if err := http.ListenAndServe(fmt.Sprintf(":%d", _service), nil); err != nil {
+  if err := http.ListenAndServe(bind, nil); err != nil {
 		panic(err)
 	}
 }
